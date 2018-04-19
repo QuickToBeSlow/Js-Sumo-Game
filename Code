@@ -1,0 +1,340 @@
+var miniondistancex = 0;
+var miniondistancey = 0;
+var minionpushed = 0;
+var strongsumox = 75;
+var strongsumoy = 200;
+var managersumox = 325;
+var managersumoy = 200;
+var minionx = 500;
+var miniony = 500;
+var minionsumocircle = {x: minionx, y: miniony, radius: 30};
+var managersumocircle = {x: managersumox, y: managersumoy, radius: 30};
+var strongsumocircle = {x: strongsumox, y: strongsumoy, radius: 45};
+var strsumoxpos = 0;
+var strsumoxneg = 0;
+var strsumoypos = 0;
+var strsumoyneg = 0;
+var minionxpos = 0;
+var minionxneg = 0;
+var minionypos = 0;
+var minionyneg = 0;
+var managersumoxpos = 0;
+var managersumoxneg = 0;
+var managersumoypos = 0;
+var managersumoyneg = 0;
+var accel = 0.25;
+var strvelocityx = 0;
+var strvelocityy = 0;
+var managervelocityx = 0;
+var managervelocityy = 0;
+var chargestamina = 0;
+var chargestaminaremove = 0;
+var charging = 0;
+var distancex = strongsumox-managersumox;
+var distancey = strongsumoy-managersumoy;
+var pushmanagerx = 0;
+var pushmanagery = 0;
+var pushed = 1;
+var minioncharge = 100;
+var minionvelocityx = 0;
+var minionvelocityy = 0;
+var minionmove = 0;
+var strongsumoscore = 0;
+var managersumoscore = 0;
+
+var setup = function() {
+	createCanvas(400,400);
+
+}
+
+var circlesAreColliding = function(a, b) {
+    return dist(a.x, a.y, b.x, b.y) <= a.radius/2 + b.radius/2;
+};
+
+var draw =function() {
+    frameRate(30);
+  if (minionx - 360 >= 0 || miniony - 360 >= 0 || minionx <= 40 || miniony <= 40) {
+		minionmove = 0;
+		
+    
+}
+  if (minionx <= strongsumox && minionmove === 1) {
+		minionvelocityx = minionvelocityx + accel/1.5;
+  }
+  if (minionx > strongsumox && minionmove === 1) {
+		minionvelocityx = minionvelocityx - accel/1.5;
+  }
+  if (miniony <= strongsumoy && minionmove === 1) {
+		minionvelocityy = minionvelocityy + accel/1.5;
+  }
+  if (miniony > strongsumoy && minionmove === 1) {
+		minionvelocityy = minionvelocityy - accel/1.5;
+  }
+
+  distancex = floor(abs(strongsumox - managersumox));
+  distancey = floor(abs(strongsumoy - managersumoy));
+  miniondistancex = floor(abs(strongsumox - minionx));
+  miniondistancey = floor(abs(strongsumoy - miniony));
+  if (chargestaminaremove === 1 && chargestamina > 4) {
+        chargestamina = chargestamina - 4;
+    charging = 0.2;
+  } else {
+    charging = 0;
+  }
+  if (chargestamina < 100) {
+        chargestamina = chargestamina + 1;
+  }
+  if (minioncharge < 200) {
+    minioncharge = minioncharge + 1;
+  }
+  minionvelocityx = 0.95 * minionvelocityx;
+  minionvelocityy = 0.95 * minionvelocityy;
+  strvelocityx = 0.95 * strvelocityx;
+  strvelocityy = 0.95 * strvelocityy;
+  strongsumox = strongsumox + strvelocityx;
+  strongsumoy = strongsumoy + strvelocityy;
+  managervelocityx = 0.95 * managervelocityx;
+  managervelocityy = 0.95 * managervelocityy;
+  managersumox = managersumox + managervelocityx;
+  managersumoy = managersumoy + managervelocityy;
+  minionx = minionx + minionvelocityx;
+  miniony = miniony + minionvelocityy;
+  background(127);
+  fill(255,255,0);
+  rect(0,0,chargestamina,15);
+  fill(0,255,0);
+  rect(400,0,-minioncharge/2,15);
+  fill(0,127,255);
+  rect(25,25,350,350);
+  fill(127);
+  rect(28,28,344,344);
+  fill(255,63,0);
+  ellipse(strongsumox,strongsumoy,50,50);
+  fill(255,63,0);
+  ellipse(minionx,miniony,30,30);
+  fill(255,255,255);
+  textSize(15);
+  text(strongsumoscore,0,30);
+  fill(255,255,255);
+  textSize(15);
+  text(managersumoscore,392,30);
+	if (strsumoxpos === 1) {
+        strvelocityx = strvelocityx + accel + charging;
+        
+  }
+  if (strsumoxneg === -1) {
+        strvelocityx = strvelocityx - accel - charging;
+    
+  }
+  if (strsumoypos === 1) {
+        strvelocityy = strvelocityy + accel + charging;
+    
+  }
+  if (strsumoyneg === -1) {
+        strvelocityy = strvelocityy - accel - charging;
+    
+  }
+  if (managersumoyneg === -1) {
+        managervelocityy = managervelocityy + accel;
+  }
+  if (managersumoypos === 1) {
+        managervelocityy = managervelocityy - accel;
+  }
+  if (managersumoxneg === -1) {
+        managervelocityx = managervelocityx - accel;
+  }
+  if (managersumoxpos === 1) {
+        managervelocityx = managervelocityx + accel;
+  }
+  fill(255,63,0);
+  ellipse(managersumox,managersumoy,managersumocircle.radius,managersumocircle.radius);
+	managersumocircle = {x: managersumox, y: managersumoy, radius: 30};
+	strongsumocircle = {x: strongsumox, y: strongsumoy, radius: 45};
+  minionsumocircle = {x: minionx, y: miniony, radius: 30};
+
+if (circlesAreColliding(managersumocircle, strongsumocircle) && pushed === 1) {
+  pushed = 0;
+	pushmanagerx = strvelocityx;
+	pushmanagery = strvelocityy;
+  if (strvelocityx>0 && managervelocityx>0 && strvelocityx>managervelocityx) {
+		strvelocityx = strvelocityx;
+        managervelocityx = managervelocityx + pushmanagerx * 2;
+} else if (strvelocityx>0 && managervelocityx>0 && strvelocityx<managervelocityx) {
+		strvelocityx = strvelocityx + managervelocityx * 2;
+        managervelocityx = managervelocityx;
+} else if (strvelocityx<0 && managervelocityx<0 && strvelocityx<managervelocityx) {
+		strvelocityx = strvelocityx;
+        managervelocityx = managervelocityx + pushmanagerx * 2;
+} else if (strvelocityx<0 && managervelocityx<0 && strvelocityx>managervelocityx) {
+		strvelocityx = strvelocityx + managervelocityx * 2;
+        managervelocityx = managervelocityx;
+} else {
+	strvelocityx = strvelocityx + managervelocityx * 2;
+  managervelocityx = managervelocityx + pushmanagerx * 2;
+} if (strvelocityy>0 && managervelocityy>0 && strvelocityy>managervelocityy) {
+		strvelocityy = strvelocityy;
+        managervelocityy = managervelocityy + pushmanagery * 2;
+} else if (strvelocityy>0 && managervelocityy>0 && strvelocityy<managervelocityy) {
+		strvelocityy = strvelocityy + managervelocityy * 2;
+        managervelocityy = managervelocityy;
+} else if (strvelocityy<0 && managervelocityy<0 && strvelocityy<managervelocityy) {
+		strvelocityy = strvelocityy;
+        managervelocityy = managervelocityy + pushmanagery * 2;
+} else if (strvelocityy<0 && managervelocityy<0 && strvelocityy>managervelocityy) {
+		strvelocityy = strvelocityy + managervelocityy * 2;
+        managervelocityy = managervelocityy;
+} else {
+	strvelocityy = strvelocityy + managervelocityy * 2;
+	managervelocityy = managervelocityy + pushmanagery * 2;
+}
+}
+if (circlesAreColliding(minionsumocircle, strongsumocircle) && minionpushed === 1) {
+  minionpushed = 0;
+	pushmanagerx = strvelocityx;
+	pushmanagery = strvelocityy;
+  if (strvelocityx>0 && minionvelocityx>0 && strvelocityx>minionvelocityx) {
+		strvelocityx = strvelocityx;
+        minionvelocityx = minionvelocityx + pushmanagerx * 2;
+} else if (strvelocityx>0 && minionvelocityx>0 && strvelocityx<minionvelocityx) {
+		strvelocityx = strvelocityx + managervelocityx * 2;
+        minionvelocityx = minionvelocityx;
+} else if (strvelocityx<0 && minionvelocityx<0 && strvelocityx<minionvelocityx) {
+		strvelocityx = strvelocityx;
+        minionvelocityx = minionvelocityx + pushmanagerx * 2;
+} else if (strvelocityx<0 && minionvelocityx<0 && strvelocityx>minionvelocityx) {
+		strvelocityx = strvelocityx + minionvelocityx * 2;
+        minionvelocityx = minionvelocityx;
+} else {
+	strvelocityx = strvelocityx + minionvelocityx * 2;
+  minionvelocityx = minionvelocityx + pushmanagerx * 2;
+} if (strvelocityy>0 && minionvelocityy>0 && strvelocityy>minionvelocityy) {
+		strvelocityy = strvelocityy;
+        minionvelocityy = minionvelocityy + pushmanagery * 2;
+} else if (strvelocityy>0 && minionvelocityy>0 && strvelocityy<minionvelocityy) {
+		strvelocityy = strvelocityy + minionvelocityy * 2;
+        minionvelocityy = minionvelocityy;
+} else if (strvelocityy<0 && minionvelocityy<0 && strvelocityy<minionvelocityy) {
+		strvelocityy = strvelocityy;
+        minionvelocityy = minionvelocityy + pushmanagery * 2;
+} else if (strvelocityy<0 && minionvelocityy<0 && strvelocityy>minionvelocityy) {
+		strvelocityy = strvelocityy + minionvelocityy * 2;
+        minionvelocityy = minionvelocityy;
+} else {
+	strvelocityy = strvelocityy + minionvelocityy * 2;
+	minionvelocityy = minionvelocityy + pushmanagery * 2;
+}
+}
+if (miniondistancey > 35 || miniondistancex > 35 && minionpushed === 0) {
+  minionpushed = 1;
+    
+  }
+if (distancey > 35 || distancex > 35 && pushed === 0) {
+  pushed = 1;
+    
+  }
+if (managersumox-360>=0 || managersumoy-360>=0 || managersumox-40<=0 || managersumoy-40<=0) {
+	managersumox = 325;
+  managersumoy = 200;
+	strongsumox = 75;
+  strongsumoy = 200;
+  managervelocityx = 0;
+  managervelocityy = 0;
+  strvelocityx = 0;
+  strvelocityy = 0;
+  minioncharge = 100;
+  chargestamina = 0;
+	minionx = 500;
+	miniony = 500;
+	minionvelocityx = 0;
+	minionvelocityy = 0;
+  if (strongsumoscore < 9 ) {
+  strongsumoscore = strongsumoscore + 1;
+  }
+} else if (strongsumox-360>=0 || strongsumoy-360>=0 || strongsumox-40<=0 || strongsumoy-40<=0) {
+	managersumox = 325;
+  managersumoy = 200;
+	strongsumox = 75;
+  strongsumoy = 200;
+  managervelocityx = 0;
+  managervelocityy = 0;
+  strvelocityx = 0;
+  strvelocityy = 0;
+	minioncharge = 100;
+  chargestamina = 0;
+	minionx = 500;
+	miniony = 500;
+	minionvelocityx = 0;
+	minionvelocityy = 0;
+  if (managersumoscore < 9 ) {
+    managersumoscore = managersumoscore + 1;
+  }
+}
+};
+
+var keyPressed = function() {
+	if (keyCode === 65) {
+		strsumoxneg = -1;
+  }
+  if (keyCode === 68) {
+    strsumoxpos = 1;
+	}
+  if (keyCode === 87) {
+    strsumoyneg = -1;
+	}
+  if (keyCode === 83) {
+    strsumoypos = 1;
+	}
+  if (keyCode === 32) {
+    chargestaminaremove = 1;
+  }
+	if (keyCode === 37) {
+    managersumoxneg = -1;
+  }
+  if (keyCode === 39) {
+    managersumoxpos = 1;
+	}
+  if (keyCode === 40) {
+    managersumoyneg = -1;
+	}
+  if (keyCode === 38) {
+    managersumoypos = 1;
+	}
+  if (keyCode === 191 && minioncharge >= 100) {
+    minionmove = 1;
+		minioncharge = minioncharge - 100;
+    minionx = managersumox;
+    miniony = managersumoy;
+    minionvelocityx = 0;
+		minionvelocityy = 0;
+  }
+};
+
+var keyReleased = function() {
+	if (keyCode === 65) {
+		strsumoxneg = 0;
+  }
+  if (keyCode === 68) {
+    strsumoxpos = 0;
+  }
+  if (keyCode === 87) {
+    strsumoyneg = 0;
+  }
+  if (keyCode === 83) {
+    strsumoypos = 0;
+  }
+  if (keyCode === 32) {
+    chargestaminaremove = 0;
+  }
+	if (keyCode === 37) {
+    managersumoxneg = 0;
+  }
+  if (keyCode === 39) {
+    managersumoxpos = 0;
+  }
+  if (keyCode === 40) {
+    managersumoyneg = 0;
+  }
+  if (keyCode === 38) {
+    managersumoypos = 0;
+  }
+};
